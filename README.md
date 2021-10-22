@@ -4,7 +4,8 @@ There are various ways to categorise concurrency bugs. In this article, we class
 
 1. Atomicity Violations
 - Concurrency bugs that occur when atomicity assumptions made about the execution 
-- Aomicity refers to the property of a multithreaded program segment that allows the segment to appear as if it occurred instantaneously to the rest of the system [[1]](#1).
+- Aomicity refers to the property of a multithreaded program segment that allows the segment to appear as if it occurred instantaneously to the rest of the system.
+<!-- [[1]](#1) -->
 
 2. Order Violations
 - Definition: 
@@ -33,10 +34,10 @@ There are various ways to categorise concurrency bugs. In this article, we class
 
 #### Buggy programs containing both data races (D) and atomicity violations (A)
 
-- DA Example #1
+1. DA Example #1
 
-Below example includes both data raes and atomicity violations.
-This can be 
+- Below example includes both data raes and atomicity violations.
+- This can be 
 
 ```java
 import java.util.ArrayList;
@@ -62,7 +63,32 @@ public class ConcurrencyTest {
 }
 ```
 
-- DA Example #2
+1.1. Detection with existing tools
+
+- Running RacerD results in the following:
+```bash
+$ infer --racerd-only .java
+
+```
+
+- Running Chord
+
+
+1.2. Fixing with existing tools
+
+- Running Hippodrome results in the following outcome:
+```bash
+$ 
+```
+
+
+- Running HFix
++ Not feasible as HFix was unavailable.
+
+
+2. DA Example #2
+
+- 
 
 
 
@@ -71,6 +97,6 @@ public class ConcurrencyTest {
 
 
 
-### References
+<!-- ### References
 <a id="1">[1]</a> 
-
+ -->
