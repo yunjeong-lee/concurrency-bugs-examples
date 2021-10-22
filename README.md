@@ -3,36 +3,28 @@
 There are various ways to categorise concurrency bugs. In this article, we classify them into four different categories: _atomicity violations_, _order violations_, _data races_, and _deadlocks_.
 
 1. Atomicity Violations
-- Concurrency bugs that occur when atomicity assumptions made about the execution 
+- Atomicity violations occur when atomicity assumptions made about the execution 
 - Aomicity refers to the property of a multithreaded program segment that allows the segment to appear as if it occurred instantaneously to the rest of the system.
 <!-- [[1]](#1) -->
 
 2. Order Violations
-- Definition: 
+- Order violations occur when memory accesses from two or more threads happen in an order inconsistent with the order desired by programmers.
+- They are caused by incorrect assumptions or absence of correct assumptions made on the order of execution of concurrent threads.
 
 3. Data Races
-- Definition: 
-
-4. Deadlocks
-- Definition: 
-
-
-#### Notes
-
-1. Data Races
+- Data races occur when two or more threads access the same memory location while at least one of them performs a write operation.
 - Data races and race conditions are not the same. There are data races that are not race conditions as well as race conditions that are not data races.
 - At the same time, not all data races are buggy. There are benign data races.
 - Often, it requires a deeper understanding of the software to decide whether data races identified are true bugs or not.
 
-2. Race Conditions
-- Race conditions occur when 
-- In this context, we consider data races as a type of race condition bugs.
+4. Deadlocks
+- Deadlocks are defined as a condition in a system where a process cannot proceed because it needs to obtain a resource held by another process but the process itself is holding a resource that the other process needs.
 
-3. Examples
-- These examples are collected in an attempt to find interdependencies between different types of concurrency bugs.
--  
 
-#### Buggy programs containing both data races, atomicity violations, and/or order violations
+#### Note: These examples are collected in an attempt to find interdependencies between different types of concurrency bugs.
+
+
+## Buggy programs containing both data races, atomicity violations, and/or order violations
 
 1. Example #1 : data races + atomicity violations
 
@@ -69,6 +61,15 @@ public class ConcurrencyTest {
 ```
 
 2. Example #2 : data races + atomicity violations
+
+
+```java
+
+
+```
+
+
+3. Example #3 : data races + order violations
 
 
 
