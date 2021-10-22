@@ -1,4 +1,4 @@
-### Types of Concurrency Bugs
+## Types of Concurrency Bugs
 
 There are various ways to categorise concurrency bugs. In this article, we classify them into four different categories: _atomicity violations_, _order violations_, _data races_, and _deadlocks_.
 
@@ -29,9 +29,9 @@ There are various ways to categorise concurrency bugs. In this article, we class
 1. Example #1 : data races + atomicity violations
 
 - Root case of the bugs can be diagnosed in relation to data races or atomicity violations.
-    + In the context of data races, there may be threads writing to the list `a` via `a.add(x);` while others simultaneously read it via `!a.contains(x)`.
-    + In the context of atomicity violations, the fact that checking `if (!a.contains(x))` and modifying `a.add(x)` were not an atomic operation caused the bug.
-    + This bug can be fixed by adding a synchronisation primitive and making the operations atomic, as shown in the comments.
+  * In the context of data races, there may be threads writing to the list `a` via `a.add(x);` while others simultaneously read it via `!a.contains(x)`.
+  * In the context of atomicity violations, the fact that checking `if (!a.contains(x))` and modifying `a.add(x)` were not an atomic operation caused the bug.
+  * This bug can be fixed by adding a synchronisation primitive and making the operations atomic, as shown in the comments.
 
 ```java
 import java.util.ArrayList;
@@ -91,8 +91,10 @@ $ infer --racerd-only .java
 1.2. Fixing with existing tools
 
 - Running Hippodrome results in the following outcome:
+
 ```console
-$ 
+$ infer
+
 ```
 
 - Running HFix
