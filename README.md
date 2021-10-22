@@ -32,12 +32,14 @@ There are various ways to categorise concurrency bugs. In this article, we class
 - These examples are collected in an attempt to find interdependencies between different types of concurrency bugs.
 -  
 
-#### Buggy programs containing both data races (D) and atomicity violations (A)
+#### Buggy programs containing both data races, atomicity violations, and/or order violations
 
-1. DA Example #1
+1. Example #1 : data races + atomicity violations
 
-- Below example includes both data raes and atomicity violations.
-- This can be 
+- Root case of the bugs can be diagnosed in relation to data races or atomicity violations.
+-- In the context of data races, there may be threads writing to the list `a` via `a.add(x);` while others simultaneously read it via `!a.contains(x)`.
+-- In the context of atomicity violations, the fact that checking `if (!a.contains(x))` and modifying `a.add(x)` were not an atomic operation caused the bug.
+- This bug can be fixed by adding a synchronisation primitive and making the operations atomic, as shown in the comments.
 
 ```java
 import java.util.ArrayList;
@@ -56,17 +58,28 @@ public class ConcurrencyTest {
     }
 
     private static void addIfAbsent(int x) {
+        // synrhonized(a) {
         if (!a.contains(x)) {
             a.add(x);
         }
+        // }
     }
 }
+// code source : IntelliJ IDEA Debugging Tutorial
 ```
+
+2. Example #2 : data races + atomicity violations
+
+
+
+
+
 
 1.1. Detection with existing tools
 
 - Running RacerD results in the following:
-```bash
+
+```console
 $ infer --racerd-only .java
 
 ```
@@ -77,23 +90,13 @@ $ infer --racerd-only .java
 1.2. Fixing with existing tools
 
 - Running Hippodrome results in the following outcome:
-```bash
+```console
 $ 
 ```
-
 
 - Running HFix
 + Not feasible as HFix was unavailable.
 
-
-2. DA Example #2
-
-- 
-
-
-
-
-- DA Example #3
 
 
 
