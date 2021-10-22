@@ -1,37 +1,78 @@
-## Welcome to GitHub Pages
+## Concurrency Bugs Examples
 
-You can use the [editor on GitHub](https://github.com/yunjeong-lee/concurrency-bugs-examples/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+### Types of Concurrency Bugs
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+There are various ways to categorise concurrency bugs. In this article, we classify them into four different categories: _atomicity violations_, _order violations_, _data races_, and _deadlocks_.
 
-### Markdown
+1. Atomicity Violations
+- Concurrency bugs that occur when atomicity assumptions made about the execution 
+- Aomicity refers to the property of a multithreaded program segment that allows the segment to appear as if it occurred instantaneously to the rest of the system [[1]](#1).
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+2. Order Violations
+- Definition: 
 
-```markdown
-Syntax highlighted code block
+3. Data Races
+- Definition: 
 
-# Header 1
-## Header 2
-### Header 3
+4. Deadlocks
+- Definition: 
 
-- Bulleted
-- List
 
-1. Numbered
-2. List
+#### Notes
 
-**Bold** and _Italic_ and `Code` text
+1. Data Races
+- Data races and race conditions are not the same. There are data races that are not race conditions as well as race conditions that are not data races.
+- At the same time, not all data races are buggy. There are benign data races.
+- Often, it requires a deeper understanding of the software to decide whether data races identified are true bugs or not.
 
-[Link](url) and ![Image](src)
+2. Race Conditions
+- Race conditions occur when 
+- In this context, we consider data races as a type of race condition bugs.
+
+3. Examples
+- These examples are collected in an attempt to find interdependencies between different types of concurrency bugs.
+-  
+
+#### Buggy programs containing both data races (D) and atomicity violations (A)
+
+- DA Example #1
+
+Below example includes both data raes and atomicity violations.
+This can be 
+
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class ConcurrencyTest {
+    static final List a = Collections.synchronizedList(new ArrayList());
+
+    public static void main(String[] args) {
+        Thread t = new Thread(() -> addIfAbsent(17));
+        t.start();
+        addIfAbsent(17);
+        t.join();
+        System.out.println(a);
+    }
+
+    private static void addIfAbsent(int x) {
+        if (!a.contains(x)) {
+            a.add(x);
+        }
+    }
+}
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+- DA Example #2
 
-### Jekyll Themes
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/yunjeong-lee/concurrency-bugs-examples/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
-### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+- DA Example #3
+
+
+
+### References
+<a id="1">[1]</a> 
+
