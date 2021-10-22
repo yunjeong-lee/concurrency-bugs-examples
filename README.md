@@ -21,10 +21,9 @@ There are various ways to categorise concurrency bugs. In this article, we class
 - Deadlocks are defined as a condition in a system where a process cannot proceed because it needs to obtain a resource held by another process but the process itself is holding a resource that the other process needs.
 
 
-#### Note: These examples are collected in an attempt to find interdependencies between different types of concurrency bugs.
-
-
 ## Buggy programs containing both data races, atomicity violations, and/or order violations
+
+#### Note: Examples below are collected in an attempt to find interdependencies between different types of concurrency bugs.
 
 1. Example #1 : data races + atomicity violations
 
