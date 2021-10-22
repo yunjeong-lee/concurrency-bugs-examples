@@ -1,5 +1,3 @@
-## Concurrency Bugs Examples
-
 ### Types of Concurrency Bugs
 
 There are various ways to categorise concurrency bugs. In this article, we classify them into four different categories: _atomicity violations_, _order violations_, _data races_, and _deadlocks_.
