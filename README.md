@@ -203,9 +203,9 @@ $ infer
 * How about we list out all possible patterns of each type of concurrency bugs and try to connect one pattern to another? 
 
 
-Some technical questions:
+<!-- Some technical questions:
 - Can I think of initialising a thread as a write operation? If so, there could be an overlapping pattern between order violations and data races.
-
+ -->
 - By the way, how do existing detection tools identify benign data races from faulty ones? Assuming a high false positive rate is what makes programmers frustrated in using this tool, I am curious to know how the existing tools filter them out, if it's good enough, and if not, how to improve this filtering process.
 
 
