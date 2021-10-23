@@ -25,53 +25,32 @@ There are various ways to categorise concurrency bugs. We classify them into fou
 
 1. Data races are often said to be associated with, if not the cause of, other types of concurrency bugs such as atomicity violations or order violations.
 
+
 2. How exactly are they interconnected? Is there any way to measure this interdependencies?
 
-  2-a. By the way, I couldn't find any work covering their dependencies or correlations, other than a qualitative, general statement. Let me see if it is any possible, though.
+  + By the way, I couldn't find any work covering their dependencies or correlations, other than a qualitative, general statement. Let me see if it is any possible, though.
   
-  2-b. First, what would be examples of buggy programs that contain more than one types of concurrency bugs? You can find some of these examples below (Examples #1-5).
+  + First, what would be examples of buggy programs that contain more than one types of concurrency bugs? You can find some of these examples below (Examples #1-5).
   
-  2-c. Findings from the examples:
-    - Races (buggy, not the benign ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
-    - 
-  
+  + Findings from the examples:
+    - Quite a few concurrency bugs can be classified as more than one type of concurrency bugs. It is not that one type of concurrency bugs is a cause of another.
+    - Data races (buggy, not the benign, ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
+    - Data races and order violations also overlap due to write happening out of order between read operations.
+
 3. Moreover, if these bugs are interconnected, how can we addresss--i.e., fix--multiple (sub-)types of (race condition) concurrency bugs at the same time? (Here, race condition bugs refer to atomicity violations, order violations, and data races.)
 
-  3-a. At the end of the day, we want to fix all the bugs, or as much as possible. It is possible to have programs that are race-free but still contain other bugs such as atomicity violations or fixing data races results in other bugs such as deadlocks. For example, you can have the following race-free program with an atomicity violation (where the read and update of `counter` should have happened inside the same critical section):
-  ```java
-  int counter; // shared variable
-               // protected by lock L
-  
-  void increment() {
-    int temp;
-    
-    lock(L);
-    temp = counter;
-    unlock(L);
-    
-    temp++;
-    
-    lock(L);
-    counter = temp;
-    unlock(L);
-  }
-  // source: Atom-Aid
-  ```
+  + At the end of the day, we want to fix all the bugs, or as much as possible. It is possible to have programs that are race-free but still contain other bugs such as atomicity violations (see Example #3) or fixing data races results in other bugs such as deadlocks. 
 
-  3-b. How do existing tools perform with respect to the abovementioned examples?
-    3-b-i. With respect to detection using RacerD
-    
-    3-b-ii. With respect to repair using Hippodrome
-    
-    3-b-iii. Observations made on detection / repair using existing tools
+  + How do existing tools perform with respect to the abovementioned examples?
+    - With respect to detection using RacerD
+    - With respect to repair using Hippodrome
+    - Observations made on detection / repair using existing tools
 
-  3-c. Atomicity violations and order violations are often caused by incorrect assumptions or absense of correct assumptions made on the atomicity of operations or order of execution of concurrent threads respectively. Can we provide these assumptions as constraints and have repair tool 
+  + Atomicity violations and order violations are often caused by incorrect assumptions or absense of correct assumptions made on the atomicity of operations or order of execution of concurrent threads respectively. Can we provide these assumptions as constraints and have repair tool 
 
 
 
-
-
-## Buggy programs containing both data races, atomicity violations, and/or order violations
+## Examples containing data races, atomicity violations, and/or order violations
 
 #### Note: Examples below are collected in an attempt to find interdependencies between different types of concurrency bugs.
 
@@ -109,8 +88,12 @@ public class ConcurrencyTest {
 // code source : IntelliJ IDEA Debugging Tutorial
 ```
 
-2. Example #2 : data races + atomicity violations + order violations
+2. Example #2 : order violations + atomicity violations + data races
 
+- Root case of the bugs can be diagnosed in relation to order violations, atomicity violations, or data races.
+  * In the context of order violations, 
+  * In the context of atomicity violations,
+  * In the context of data races,
 
 ```java
 
@@ -134,6 +117,7 @@ class Process extends Thread {
     }
 
     public void DoneWaiting() {
+        
         // do other stuff here
         io_pending = false; 
     }
@@ -147,7 +131,31 @@ class Process extends Thread {
 
 3. Example #3 : atomicity violations + order violations
 
+- The following example is free of data races, but still can be classified as atomicity violations or order violations. 
+  * There are no data races as read and write operations on the shared variable `counter` are protected by lock `L`.
+  * From atomicity violations perspective, the read and update of `counter` should have happened inside the same critical section.
+  * In the context of order violations, `counter` should have been read before it is updated.
+  * This bug can be fixed by making these read and write operations atomic, which will also correct the order.
 
+  ```java
+  int counter; // shared variable
+               // protected by lock L
+  
+  void increment() {
+    int temp;
+    
+    lock(L);
+    temp = counter;
+    unlock(L);
+    
+    temp++;
+    
+    lock(L);
+    counter = temp;
+    unlock(L);
+  }
+  // source: Atom-Aid
+  ```
 
 4. Example #4 : data races + atomicity violations
 
@@ -196,6 +204,8 @@ $ infer
 
 Some technical questions:
 - Can I think of initialising a thread as a write operation? If so, there could be an overlapping pattern between order violations and data races.
+
+- By the way, how do existing detection tools identify benign data races from faulty ones? Assuming a high false positive rate is what makes programmers frustrated in using this tool, I am curious to know how the existing tools filter them out, if it's good enough, and if not, how to improve this filtering process.
 
 
 
