@@ -21,37 +21,42 @@ There are various ways to categorise concurrency bugs. We classify them into fou
 - Deadlocks are defined as a condition in a system where a process cannot proceed because it needs to obtain a resource held by another process but the process itself is holding a resource that the other process needs.
 
 
-## Thought Process
+## Thought Process Reg. Interdependencies between Concurrency Bugs
 
 1\. Data races are often said to be associated with, if not the cause of, other types of concurrency bugs such as atomicity violations or order violations.
 
-2\. How exactly are they interconnected? Is there any way to measure this interdependencies? 
+2\. How exactly are they interconnected? Is there any to measure this interdependencies in order to target multiple kinds of concurrency bugs at the same time? 
 
-  2.1. By the way, I couldn't find any work covering their dependencies or correlations, other than a qualitative, general statement. Let me see if it is any possible, though.
+  2.1. Evaluating correlations is one way to measure it, but in this concurrency bug context, is it even posible to measure correlations (or interdependencies via some alternative way)?
+
+  2.2. By the way, I couldn't find any work covering their dependencies or correlations, other than a qualitative, general statement. Let me see if it is any possible, though.
   
-  2.2. First, what would be examples of buggy programs that contain more than one types of concurrency bugs? Found some examples, as shown in Examples #1-5 below.
+3\. What would be examples of buggy programs that contain more than one types of concurrency bugs? Found some examples, as shown in Examples #1-5 below.
   
-  2.3. Findings from the examples:
+  3.1. Findings from the examples:
       a. Quite a few concurrency bugs can be classified as more than one type of concurrency bugs. It is not that one type of concurrency bugs is a cause of another.
       b. Data races (buggy, not the benign, ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
       c. Data races and order violations also overlap due to write happening out of order between read operations.
 
-3\. Seems to me that their interdependencies are hard to measure unless all possible patterns of each type are identified and we make connections between these patterns.
+4\. Seems to me that their interdependencies are hard to measure unless all possible patterns of each type are identified and we make connections between these patterns.
 
-4\. Moreover, if these bugs are interconnected, how can we addresss--i.e., fix--multiple multiple types of (race condition) concurrency bugs at the same time? (Here, race condition bugs refer to atomicity violations, order violations, and data races.)
+  4.1. These patterns would vary based on the programming language used in concurrent programs.
 
-  4.1. At the end of the day, we want to fix all the bugs, or as much as possible. It is possible to have programs that are race-free but still contain other bugs such as atomicity violations (see Example #3) or fixing data races results in other bugs such as deadlocks. 
+5\. Moreover, if these bugs are interconnected, how can we addresss--i.e., fix--multiple multiple types of (race condition) concurrency bugs at the same time? (Here, race condition bugs refer to atomicity violations, order violations, and data races.)
 
-5\. By the way, how do existing tools perform with respect to the abovementioned examples? What are and aren't they capable of? Is it posisble that race repair tools end up fixing data races but atomicity violations, order violations, or even deadlocks remain unfixed?
+  5.1. At the end of the day, we want to fix all the bugs, or as much as possible. It is possible to have programs that are race-free but still contain other bugs such as atomicity violations (see Example #3) or fixing data races results in other bugs such as deadlocks. 
 
-  5.1. Findings from running existing tools (RacerD, Hippodrome) on the examples:
+6\. By the way, how do existing tools perform with respect to the abovementioned examples? What are and aren't they capable of? Is it posisble that race repair tools end up fixing data races but atomicity violations, order violations, or even deadlocks remain unfixed?
+
+(Below in progress)
+  6.1. Findings from running existing tools (RacerD, Hippodrome)
       a. With respect to detection using RacerD
       b. With respect to repair using Hippodrome
       c. Observations made on detection / repair using existing tools
 
-6\. Since these bugs are relevant, how can we go about fixing these race condition bugs? How are the approaches of fixing atomicity violations or order violations?
+7\. Since these bugs are relevant, how can we go about fixing these race condition bugs? How are the approaches of fixing atomicity violations or order violations?
 
-  6.1. Atomicity violations and order violations are often caused by incorrect assumptions or absense of correct assumptions made on the atomicity of operations or order of execution of concurrent threads respectively. Can we provide these assumptions as constraints and have repair tool 
+  7.1. Atomicity violations and order violations are often caused by incorrect assumptions or absense of correct assumptions made on the atomicity of operations or order of execution of concurrent threads respectively. Can we provide these assumptions as constraints and have repair tool 
 
 
 
@@ -96,35 +101,30 @@ public class ConcurrencyTest {
 2\. Example #2 : order violations + atomicity violations + data races
 
 - Root case of the bugs can be diagnosed in relation to order violations, atomicity violations, or data races.
-    * In the context of order violations, 
-    * In the context of atomicity violations,
-    * In the context of data races,
+    * In the context of order violations, `io_pending` should be set to `true` first before it is set to `false` by another thread. That is, programmers expected `S2` to happen before `S3`. However, if `S3` happens before `S2`, the thread will hang inside the while loop.
+    * In the context of atomicity violations, reading the `currProc` (`S1`) and setting `io_pending` equal to `true` (`S2`) did not happen atomically and caused this bug. 
+    * In the context of data races, read and write operations of shared varialbe `io_pending` without proper synchronisation caused this bug.
 
 ```java
 
 class Process extends Thread {
-    private int id;
-    private int currCap;
-    private Boolean io_pending;
-    
     ...
     
     public int ReadWriteProc() {
 
-        int temp = currCap; // read the currCap
-        io_pending = true; // set io_pending to be true
+        int temp = currProc; // S1: read the currProc
+        io_pending = true;   // S2: set io_pending to be true
 
         while (io_pending) { 
-            temp--; 
-            currCap = temp;
+          // spin    
         }
-        return currCap;
+        ...
     }
 
     public void DoneWaiting() {
         
         // do other stuff here
-        io_pending = false; 
+        io_pending = false; // S3: set io_pending to be false
     }
 
     ...
@@ -162,7 +162,7 @@ class Process extends Thread {
   // source: Atom-Aid
   ```
 
-4\. Example #4 : data races + atomicity violations
+<!-- 4\. Example #4 : data races + atomicity violations
 
 
 
@@ -199,7 +199,7 @@ $ infer
 - Running HFix was not feasible as HFix was unavailable. I have contacted the authors of the paper but received no response.
 
 
-
+ -->
 ## Additional questions that came up in the process
 
 * As for the benchmark suites being used in the papers, how did they come up with new example programs in their papers? How good are these examples, i.e., how similar are they to real-life concurrency bugs?
