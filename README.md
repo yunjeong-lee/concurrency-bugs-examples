@@ -72,10 +72,6 @@ There are various ways to categorise concurrency bugs. We classify them into fou
     * This bug can be fixed by adding a synchronisation primitive and making the operations atomic, as shown in the comments.
 
 ```java
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class ConcurrencyTest {
     static final List a = Collections.synchronizedList(new ArrayList());
 
@@ -142,25 +138,25 @@ class Process extends Thread {
     * In the context of order violations, `counter` should have been read before it is updated.
     * This bug can be fixed by making these read and write operations atomic, which will also correct the order.
 
-  ```java
-  int counter; // shared variable
-               // protected by lock L
+```java
+int counter; // shared variable
+             // protected by lock L
   
-  void increment() {
-    int temp;
+void increment() {
+  int temp;
     
-    lock(L);
-    temp = counter;
-    unlock(L);
+  lock(L);
+  temp = counter;
+  unlock(L);
     
-    temp++;
+  temp++;
     
-    lock(L);
-    counter = temp;
-    unlock(L);
-  }
-  // source: Atom-Aid
-  ```
+  lock(L);
+  counter = temp;
+  unlock(L);
+}
+// source: Atom-Aid
+```
 
 <!-- 4\. Example #4 : data races + atomicity violations
 
