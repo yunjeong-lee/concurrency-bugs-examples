@@ -27,25 +27,31 @@ There are various ways to categorise concurrency bugs. We classify them into fou
 
 2\. How exactly are they interconnected? Is there any way to measure this interdependencies? 
 
-    2.1. By the way, I couldn't find any work covering their dependencies or correlations, other than a qualitative, general statement. Let me see if it is any possible, though.
+  2.1. By the way, I couldn't find any work covering their dependencies or correlations, other than a qualitative, general statement. Let me see if it is any possible, though.
   
-    2.2. First, what would be examples of buggy programs that contain more than one types of concurrency bugs? Found some examples, as shown in Examples #1-5 below.
+  2.2. First, what would be examples of buggy programs that contain more than one types of concurrency bugs? Found some examples, as shown in Examples #1-5 below.
   
-    2.3. Findings from the examples:
-        a. Quite a few concurrency bugs can be classified as more than one type of concurrency bugs. It is not that one type of concurrency bugs is a cause of another.
-        b. Data races (buggy, not the benign, ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
-        c. Data races and order violations also overlap due to write happening out of order between read operations.
+  2.3. Findings from the examples:
+      a. Quite a few concurrency bugs can be classified as more than one type of concurrency bugs. It is not that one type of concurrency bugs is a cause of another.
+      b. Data races (buggy, not the benign, ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
+      c. Data races and order violations also overlap due to write happening out of order between read operations.
 
-3\. Moreover, if these bugs are interconnected, how can we addresss--i.e., fix--multiple (sub-)types of (race condition) concurrency bugs at the same time? (Here, race condition bugs refer to atomicity violations, order violations, and data races.)
+3\. Seems to me that their interdependencies are hard to measure unless all possible patterns of each type are identified and we make connections between these patterns.
 
-3.1. At the end of the day, we want to fix all the bugs, or as much as possible. It is possible to have programs that are race-free but still contain other bugs such as atomicity violations (see Example #3) or fixing data races results in other bugs such as deadlocks. 
+4\. Moreover, if these bugs are interconnected, how can we addresss--i.e., fix--multiple multiple types of (race condition) concurrency bugs at the same time? (Here, race condition bugs refer to atomicity violations, order violations, and data races.)
 
- a. How do existing tools perform with respect to the abovementioned examples?
-   - With respect to detection using RacerD
-   - With respect to repair using Hippodrome
-   - Observations made on detection / repair using existing tools
+  4.1. At the end of the day, we want to fix all the bugs, or as much as possible. It is possible to have programs that are race-free but still contain other bugs such as atomicity violations (see Example #3) or fixing data races results in other bugs such as deadlocks. 
 
- b. Atomicity violations and order violations are often caused by incorrect assumptions or absense of correct assumptions made on the atomicity of operations or order of execution of concurrent threads respectively. Can we provide these assumptions as constraints and have repair tool 
+5\. By the way, how do existing tools perform with respect to the abovementioned examples? What are and aren't they capable of? Is it posisble that race repair tools end up fixing data races but atomicity violations, order violations, or even deadlocks remain unfixed?
+
+  5.1. Findings from running existing tools (RacerD, Hippodrome) on the examples:
+      a. With respect to detection using RacerD
+      b. With respect to repair using Hippodrome
+      c. Observations made on detection / repair using existing tools
+
+6\. Since these bugs are relevant, how can we go about fixing these race condition bugs? How are the approaches of fixing atomicity violations or order violations?
+
+  6.1. Atomicity violations and order violations are often caused by incorrect assumptions or absense of correct assumptions made on the atomicity of operations or order of execution of concurrent threads respectively. Can we provide these assumptions as constraints and have repair tool 
 
 
 
