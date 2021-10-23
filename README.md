@@ -23,30 +23,30 @@ There are various ways to categorise concurrency bugs. We classify them into fou
 
 ## Narrative
 
-1. Data races are often said to be associated with, if not the cause of, other types of concurrency bugs such as atomicity violations or order violations.
+1\. Data races are often said to be associated with, if not the cause of, other types of concurrency bugs such as atomicity violations or order violations.
 
 
-2. How exactly are they interconnected? Is there any way to measure this interdependencies?
+2\. How exactly are they interconnected? Is there any way to measure this interdependencies?
 
-  + By the way, I couldn't find any work covering their dependencies or correlations, other than a qualitative, general statement. Let me see if it is any possible, though.
+2.1. By the way, I couldn't find any work covering their dependencies or correlations, other than a qualitative, general statement. Let me see if it is any possible, though.
   
-  + First, what would be examples of buggy programs that contain more than one types of concurrency bugs? You can find some of these examples below (Examples #1-5).
+2.2. First, what would be examples of buggy programs that contain more than one types of concurrency bugs? You can find some of these examples below (Examples #1-5).
   
-  + Findings from the examples:
-    - Quite a few concurrency bugs can be classified as more than one type of concurrency bugs. It is not that one type of concurrency bugs is a cause of another.
-    - Data races (buggy, not the benign, ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
-    - Data races and order violations also overlap due to write happening out of order between read operations.
+2.3. Findings from the examples:
+> * Quite a few concurrency bugs can be classified as more than one type of concurrency bugs. It is not that one type of concurrency bugs is a cause of another.
+> * Data races (buggy, not the benign, ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
+> * Data races and order violations also overlap due to write happening out of order between read operations.
 
-3. Moreover, if these bugs are interconnected, how can we addresss--i.e., fix--multiple (sub-)types of (race condition) concurrency bugs at the same time? (Here, race condition bugs refer to atomicity violations, order violations, and data races.)
+3\. Moreover, if these bugs are interconnected, how can we addresss--i.e., fix--multiple (sub-)types of (race condition) concurrency bugs at the same time? (Here, race condition bugs refer to atomicity violations, order violations, and data races.)
 
-  + At the end of the day, we want to fix all the bugs, or as much as possible. It is possible to have programs that are race-free but still contain other bugs such as atomicity violations (see Example #3) or fixing data races results in other bugs such as deadlocks. 
+3.1. At the end of the day, we want to fix all the bugs, or as much as possible. It is possible to have programs that are race-free but still contain other bugs such as atomicity violations (see Example #3) or fixing data races results in other bugs such as deadlocks. 
 
-  + How do existing tools perform with respect to the abovementioned examples?
-    - With respect to detection using RacerD
-    - With respect to repair using Hippodrome
-    - Observations made on detection / repair using existing tools
+> * How do existing tools perform with respect to the abovementioned examples?
+>   - With respect to detection using RacerD
+>   - With respect to repair using Hippodrome
+>   - Observations made on detection / repair using existing tools
 
-  + Atomicity violations and order violations are often caused by incorrect assumptions or absense of correct assumptions made on the atomicity of operations or order of execution of concurrent threads respectively. Can we provide these assumptions as constraints and have repair tool 
+> * Atomicity violations and order violations are often caused by incorrect assumptions or absense of correct assumptions made on the atomicity of operations or order of execution of concurrent threads respectively. Can we provide these assumptions as constraints and have repair tool 
 
 
 
@@ -54,12 +54,12 @@ There are various ways to categorise concurrency bugs. We classify them into fou
 
 #### Note: Examples below are collected in an attempt to find interdependencies between different types of concurrency bugs.
 
-1. Example #1 : data races + atomicity violations
+1\. Example #1 : data races + atomicity violations
 
 - Root case of the bugs can be diagnosed in relation to data races or atomicity violations.
-  * In the context of data races, there may be threads writing to the list `a` via `a.add(x);` while others simultaneously read it via `!a.contains(x)`.
-  * In the context of atomicity violations, the fact that checking `if (!a.contains(x))` and modifying `a.add(x)` were not an atomic operation caused the bug.
-  * This bug can be fixed by adding a synchronisation primitive and making the operations atomic, as shown in the comments.
+>  * In the context of data races, there may be threads writing to the list `a` via `a.add(x);` while others simultaneously read it via `!a.contains(x)`.
+>  * In the context of atomicity violations, the fact that checking `if (!a.contains(x))` and modifying `a.add(x)` were not an atomic operation caused the bug.
+>  * This bug can be fixed by adding a synchronisation primitive and making the operations atomic, as shown in the comments.
 
 ```java
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class ConcurrencyTest {
 // code source : IntelliJ IDEA Debugging Tutorial
 ```
 
-2. Example #2 : order violations + atomicity violations + data races
+2\. Example #2 : order violations + atomicity violations + data races
 
 - Root case of the bugs can be diagnosed in relation to order violations, atomicity violations, or data races.
   * In the context of order violations, 
@@ -129,13 +129,13 @@ class Process extends Thread {
 ```
 
 
-3. Example #3 : atomicity violations + order violations
+3\. Example #3 : atomicity violations + order violations
 
 - The following example is free of data races, but still can be classified as atomicity violations or order violations. 
-  * There are no data races as read and write operations on the shared variable `counter` are protected by lock `L`.
-  * From atomicity violations perspective, the read and update of `counter` should have happened inside the same critical section.
-  * In the context of order violations, `counter` should have been read before it is updated.
-  * This bug can be fixed by making these read and write operations atomic, which will also correct the order.
+>  * There are no data races as read and write operations on the shared variable `counter` are protected by lock `L`.
+>  * From atomicity violations perspective, the read and update of `counter` should have happened inside the same critical section.
+>  * In the context of order violations, `counter` should have been read before it is updated.
+>  * This bug can be fixed by making these read and write operations atomic, which will also correct the order.
 
   ```java
   int counter; // shared variable
@@ -157,12 +157,12 @@ class Process extends Thread {
   // source: Atom-Aid
   ```
 
-4. Example #4 : data races + atomicity violations
+4\. Example #4 : data races + atomicity violations
 
 
 
 
-5. Example #5 : data races + order violations
+5\. Example #5 : data races + order violations
 
 
 
@@ -170,7 +170,7 @@ class Process extends Thread {
 ## Running detection and repair tools on the above examples
 
 
-1.1. Detection with existing tools
+1\. Detection with existing tools
 
 - Running RacerD results in the following:
 
@@ -179,10 +179,10 @@ $ infer --racerd-only .java
 
 ```
 
-- Running Chord
+- Running Chord : work in progress
 
 
-1.2. Fixing with existing tools
+2\. Fixing with existing tools
 
 - Running Hippodrome results in the following outcome:
 
