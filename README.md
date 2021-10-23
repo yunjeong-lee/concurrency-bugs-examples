@@ -34,9 +34,9 @@ There are various ways to categorise concurrency bugs. We classify them into fou
 3\. What would be examples of buggy programs that contain more than one types of concurrency bugs? Found some examples, as shown in Examples #1-5 below.
   
   3.1. Findings from the examples:
-      a. Quite a few concurrency bugs can be classified as more than one type of concurrency bugs. It is not that one type of concurrency bugs is a cause of another.
-      b. Data races (buggy, not the benign, ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
-      c. Data races and order violations also overlap due to write happening out of order between read operations.
+  - Quite a few concurrency bugs can be classified as more than one type of concurrency bugs. It is not that one type of concurrency bugs is a cause of another.
+  - Data races (buggy, not the benign, ones) and atomicity violations often overlap. There is even some paper on benchmark suite which classifies them as one type (call it "Races and atomicity violations").
+  - Data races and order violations also overlap due to write happening out of order between read operations.
 
 4\. Seems to me that their interdependencies are hard to measure unless all possible patterns of each type are identified and we make connections between these patterns.
 
@@ -50,9 +50,9 @@ There are various ways to categorise concurrency bugs. We classify them into fou
 
 (Below in progress)
   6.1. Findings from running existing tools (RacerD, Hippodrome)
-      a. With respect to detection using RacerD
-      b. With respect to repair using Hippodrome
-      c. Observations made on detection / repair using existing tools
+  - With respect to detection using RacerD
+  - With respect to repair using Hippodrome
+  - Observations made on detection / repair using existing tools
 
 7\. Since these bugs are relevant, how can we go about fixing these race condition bugs? How are the approaches of fixing atomicity violations or order violations?
 
