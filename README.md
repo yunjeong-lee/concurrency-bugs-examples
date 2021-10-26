@@ -210,6 +210,82 @@ $ infer
 
 
 
+## Other Examples
+
+### Races caused by aliasing
+
+```java
+public class Main {
+
+    public static int DEPT_NUMBER = 5;
+    public static int THREAD_NUMBER = 2;
+    public static int DIVIDED = (int) Math.ceil((double)DEPT_NUMBER / THREAD_NUMBER);
+
+    public static void main(String[] args) throws Exception {
+
+        Dept[] ds = new Dept[DEPT_NUMBER];
+        for (int i = 0; i < DEPT_NUMBER; i++) {
+            ds[i] = new Dept(i+1, 0);
+        }
+
+        HR[] threads = new HR[THREAD_NUMBER];
+        for (int i = 0; i <= THREAD_NUMBER; i=i+DIVIDED-1) {
+            for (int j = 0; j < DIVIDED; j++) {
+                Dept d = ds[i+j];
+                threads[i] = new HR(d);
+                threads[i].start();
+            }
+        }
+        
+        for (int i = 0; i <= THREAD_NUMBER; i=i+DIVIDED-1) {
+            for (int j = 0; j < DIVIDED; j++) {
+                threads[i].join();
+            }
+        }
+    }
+    
+}
+
+public class Dept {
+    
+    public Integer id;
+    public Integer size;
+    public Employee employeeA;
+    public Employee employeeB;
+
+    public Dept(Integer id, Integer size) {
+        this.id = id;
+        this.size = size;
+    }
+
+    public int assignEmployees() {
+        this.employeeA = new Employee("empA");
+        this.size++;
+        this.employeeB = new Employee("empB");
+        this.size++;   
+        return this.size;
+    }    
+}
+
+public class HR extends Thread {
+
+    Dept dpt;
+
+    public HR(Dept d) {
+        this.dpt = d;
+    }
+
+    @Override
+    public void run() {
+        int res = dpt.assignEmployees();
+        System.out.println("Dept " + dpt.id + " has " + dpt.size + " employees");
+    }
+    
+}
+
+```
+
+
 
 <!-- ### References
 <a id="1">[1]</a> 
