@@ -285,6 +285,29 @@ public class HR extends Thread {
 
 ```
 
+In the above example, RacerD fails to detect races caused by aliasing:
+
+```bash
+$ infer --racerd-only -- javac -cp annotations.jar *.java
+Capturing in javac mode...
+Found 4 source files to analyze in /home/yunjeonglee/Documents/program-repair/racerdfix/src/test/java/aliastest/infer-out
+4/4 [################################################################################] 100% 50.911ms
+
+  No issues found  
+```
+
+On the other hand, multiple HR threads simultaneously writing on the shared department data, resulting over-assigned department:
+
+```bash
+$ java aliastest.Main 
+Dept 3 has 4 employees
+Dept 3 has 2 employees
+Dept 1 has 2 employees
+Dept 2 has 2 employees
+Dept 4 has 2 employees
+Dept 5 has 2 employees
+
+```
 
 
 <!-- ### References
