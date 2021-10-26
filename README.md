@@ -72,26 +72,45 @@ There are various ways to categorise concurrency bugs. We classify them into fou
     * This bug can be fixed by adding a synchronisation primitive and making the operations atomic, as shown in the comments.
 
 ```java
-public class ConcurrencyTest {
-    static final List a = Collections.synchronizedList(new ArrayList());
+public class User extends Thread {
+    List<Integer> list;
+    // List<Integer> list;
+    Integer elem;
 
-    public static void main(String[] args) {
-        Thread t = new Thread(() -> addIfAbsent(17));
-        t.start();
-        addIfAbsent(17);
-        t.join();
-        System.out.println(a);
+    public User(List<Integer> ls, Integer x) {
+        this.list = ls;
+        this.elem = x;
     }
-
-    private static void addIfAbsent(int x) {
-        // synrhonized(a) {
-        if (!a.contains(x)) {
-            a.add(x);
+    
+    @Override
+    public void run() { // addIfAbset(int x)
+        // synrhonized(a) {     --- fix to the atomicity violation
+        if (!list.contains(elem)) {
+            list.add(elem);
         }
-        // }
+        // }                    --- fix to the atomicity violation
     }
 }
-// code source : IntelliJ IDEA Debugging Tutorial
+
+public class Main {
+    static final List l = Collections.synchronizedList(new ArrayList());
+
+    public static void main(String[] args) {
+        User[] users = new User[4];
+        for (int i = 0; i < users.length; i++) {
+            users[i] = new User(l, 17);
+            users[i].start();
+        }
+
+        for (int j = 0; j < users.length; j++) {
+            users[j].join();
+            System.out.println(l);
+        }
+
+    }
+}
+
+// source : originally taken from IntelliJ IDEA Debugging Tutorial and altered
 ```
 
 2\. Example #2 : order violations + atomicity violations + data races
