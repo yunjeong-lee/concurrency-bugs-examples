@@ -331,7 +331,7 @@ Dept 5 has 2 employees
 
 ### Other concurrency bugs may be left unfixed
 
-* A data race example from HIPPODROME paper which has atomicity violations / order violations left unfixed without optimisation
+* A data race example from HIPPODROME paper 
 
 ```java
 public class CustomerInfo {  
@@ -379,7 +379,47 @@ public class ThreadRun extends Thread{
 
 ```
 
+* After running the HIPPODROME, the repaired program has atomicity violations / order violations left unfixed without optimisation
 
+```java
+public class CustomerInfo {  
+  
+ 	private Account[] accounts; 
+	
+	// more fields and methods
+  
+ 	public void withdraw(int accountNumber, int amount){ 
+ 		int temp = accounts[accountNumber].getBalance(); 
+ 		temp = temp - amount; 
+ 		accounts[accountNumber].setBalance(temp); 
+ 	} 
+ 	 
+ 	public void deposit(int accountNumber, int amount){ 
+ 		int temp = accounts[accountNumber].getBalance(); 
+ 		temp = temp + amount; 
+ 		accounts[accountNumber].setBalance(temp); 
+ 	} 
+}
+
+
+public class Account { 
+        
+	Object lock1 =  new Object();  
+  
+ 	private int balance; 
+  
+ 	public int getBalance() { 
+ 		synchronized(lock1) { return balance; }  
+ 	 
+ 	} 
+  
+ 	public void setBalance(int balance) { 
+ 		synchronized(lock1) { this.balance = balance; }  
+ 	 
+ 	} 
+ 	 
+}
+```
 
 
 <!-- ### References
