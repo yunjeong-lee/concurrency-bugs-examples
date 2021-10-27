@@ -329,6 +329,57 @@ Dept 5 has 2 employees
 ```
 
 
+### Other concurrency bugs may be left unfixed
+
+* A data race example from HIPPODROME paper which has atomicity violations / order violations left unfixed without optimisation
+
+```java
+public class CustomerInfo {  
+  
+ 	// more fields and methods
+  
+ 	public void withdraw(int accountNumber, int amount){ 
+ 		int temp = accounts[accountNumber].getBalance(); 
+ 		temp = temp - amount; 
+ 		accounts[accountNumber].setBalance(temp); 
+ 	} 
+ 	 
+ 	public void deposit(int accountNumber, int amount){ 
+ 		int temp = accounts[accountNumber].getBalance(); 
+ 		temp = temp + amount; 
+ 		accounts[accountNumber].setBalance(temp); 
+ 	} 
+}
+
+public class Account {
+
+	private int balance;
+
+	public int getBalance() {
+		return balance;
+	}
+
+	public void setBalance(int balance) {
+		this.balance = balance;
+	}	
+}
+
+// Testing Thread
+public class ThreadRun extends Thread{
+
+	CustomerInfo ci;
+
+	@Override
+	public void run() {
+		ci.deposit(1, 50);
+	}
+}
+
+```
+
+
+
+
 <!-- ### References
 <a id="1">[1]</a> 
  -->
