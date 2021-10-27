@@ -336,7 +336,9 @@ Dept 5 has 2 employees
 ```java
 public class CustomerInfo {  
   
- 	// more fields and methods
+ 	private Account[] accounts; 
+	
+	// more fields and methods
   
  	public void withdraw(int accountNumber, int amount){ 
  		int temp = accounts[accountNumber].getBalance(); 
