@@ -454,7 +454,7 @@ class Test7 {
 } 
 ```
 
-Once the above is repaired, it results in the following:
+* Once the above is repaired, it results in the following:
 
 ```java
 class Test7 { 
@@ -483,7 +483,48 @@ class Test7 {
 }
 ```
 
+* Suppose there are existing locks, as shown below:
 
+```java
+class Test7 {
+
+    Object existingLock1 =  new Object();      
+    Object existingLock2 =  new Object();      
+      
+    Account myAccount;           
+    
+    public Test7(Account a) { myAccount = a;}     
+          
+    public void deposit1(int x) {     
+        synchronized(existingLock1) { myAccount.amt = myAccount.amt + x; }
+    }     
+      
+    public void deposit2(int x) {
+        synchronized(existingLock2) { myAccount.amt = myAccount.amt + x; }
+    }
+
+    public void withdraw1(int x) {     
+        synchronized(existingLock1) { myAccount.amt = myAccount.amt - x; }
+    }
+      
+    public void withdraw2(int x) {  
+        myAccount.amt = myAccount.amt - x; // unprotected, causing data races
+    }      
+}
+```
+
+* Repair algorithm may go for the most frequently used lock, based on the reasoning that fewer number of locks can be created if we opt for the most fequently used lock:
+
+```java
+
+```
+
+* However, this may cause the performance slowdown, as this could cause more threads waiting for the shared resource (lock).
+
+```java
+
+
+```
 
 
 <!-- ### References
