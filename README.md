@@ -422,6 +422,70 @@ public class Account {
 ```
 
 
+### Repair Algorithm Example - Most frequent lock is chosen
+
+* If there are no existing locks, the repair algorithm creates one
+
+```java
+class Account {  int amt = 0;  }     
+          
+@ThreadSafe     
+class Test7 {
+ 
+    Account myAccount;           
+    
+    public Test7(Account a) { myAccount = a;}     
+          
+    public void deposit1(int x) {     
+        myAccount.amt = myAccount.amt + x;
+    }     
+      
+    public void deposit2(int x) {
+        myAccount.amt = myAccount.amt + x;
+    }
+
+    public void withdraw1(int x) {     
+        myAccount.amt = myAccount.amt - x;
+    }
+      
+    public void withdraw2(int x) {  
+        myAccount.amt = myAccount.amt - x;
+    }      
+} 
+```
+
+Once the above is repaired, it results in the following:
+
+```java
+class Test7 { 
+
+    Object newLock =  new Object();
+        
+    Account myAccount;            
+     
+    public Test7(Account a) { myAccount = a;}      
+
+    public void deposit1(int x) {      
+        synchronized(newLock) { myAccount.amt = myAccount.amt + x; }  
+    }      
+ 
+    public void deposit2(int x) { 
+        synchronized(newLock) { myAccount.amt = myAccount.amt + x; }  
+    }
+
+    public void withdraw1(int x) {      
+        synchronized(newLock) { myAccount.amt = myAccount.amt - x; }  
+    } 
+    
+    public void withdraw2(int x) {   
+        synchronized(newLock) { myAccount.amt = myAccount.amt - x; }  
+    }
+}
+```
+
+
+
+
 <!-- ### References
 <a id="1">[1]</a> 
  -->
