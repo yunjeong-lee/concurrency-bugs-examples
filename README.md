@@ -247,9 +247,6 @@ class HR {
 
 class Dept {
 
-    int f = 0;
-    Size size;
-    
     Size size;
 
     Size getSize() { 
